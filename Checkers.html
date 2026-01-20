@@ -5,8 +5,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Шашки</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.12/brython.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/brython@3.12/brython_stdlib.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/brython@3.12/brython.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/npm/brython@3.12/brython_stdlib.js"></script>
 </head>
 <body>
 
@@ -18,32 +20,35 @@
 from browser import document, html, window
 import enum
 
-class UserType(enum.Enum): # Тип пользователя
-    utHuman = enum.auto() # Человек
-    utAI = enum.auto() # Иммитация интеллекта
+# ----------------------------------------------------------------------
+#  Базовые типы и структуры
+# ----------------------------------------------------------------------
+class UserType(enum.Enum):                     # Тип пользователя
+    utHuman = enum.auto()                     # Человек
+    utAI    = enum.auto()                     # Имитация интеллекта
 
-class User: # Игрок
+class User:                                    # Игрок
     def __init__(self, a_uType, a_uName):
         self.uType = a_uType
         self.uName = a_uName
-    def __eq__(User1,User2):
+    def __eq__(User1, User2):
         return User1.uName == User2.uName and User1.uType == User2.uType
 
 def TestUserEqual():
-    i = User(UserType.utHuman,"User1")
-    you = User(UserType.utHuman,"User2")
+    i   = User(UserType.utHuman, "User1")
+    you = User(UserType.utHuman, "User2")
     assert i != you
-    i = User(UserType.utHuman,"User1")
-    you = User(UserType.utHuman,"User1")
+    i   = User(UserType.utHuman, "User1")
+    you = User(UserType.utHuman, "User1")
     assert i == you
-    i = User(UserType.utHuman,"User1")
-    you = User(UserType.utAI,"User1")
+    i   = User(UserType.utHuman, "User1")
+    you = User(UserType.utAI,    "User1")
     assert i != you
-    i = User(UserType.utAI,"User1")
-    iou = User(UserType.utAI,"User1")
+    i   = User(UserType.utAI,    "User1")
+    iou = User(UserType.utAI,    "User1")
     assert i == you
 
-class Point: # Точка или шахматная клетка
+class Point:                                   # Точка / шахматная клетка
     def __init__(self, a_X, a_Y):
         self.x = a_X
         self.y = a_Y
@@ -52,23 +57,24 @@ class Point: # Точка или шахматная клетка
     def __eq__(self, a_Point2):
         return self.x == a_Point2.x and self.y == a_Point2.y
 
-class BoardItemType(enum.Enum): # Тип шашек
-    biNone = enum.auto() # Ничего
-    biChecker = enum.auto() # Шашка
-    biDamka = enum.auto() # Дамка
+class BoardItemType(enum.Enum):                 # Тип шашек
+    biNone    = enum.auto()                   # Пусто
+    biChecker = enum.auto()                   # Обычная шашка
+    biDamka   = enum.auto()                   # Дамка
 
-class BoardItem: # Фигура на доске
+class BoardItem:                               # Фигура на доске
     def __init__(self, a_Type, a_UserID):
-        self.iType = a_Type
+        self.iType  = a_Type
         self.userID = a_UserID
     def __eq__(self, a_Point2):
         return self.iType == a_Point2.iType and self.userID == a_Point2.userID
 
-class Board: #Игровая доска
+class Board:                                   # Игровая доска
     def __init__(self, a_Width, a_Height):
-        self.bWidth = a_Width
+        self.bWidth  = a_Width
         self.bHeight = a_Height
-        self.bData = CreateArray2D(BoardItem(BoardItemType.biNone, 0), self.bWidth, self.bHeight)
+        self.bData   = CreateArray2D(BoardItem(BoardItemType.biNone, 0),
+                                    self.bWidth, self.bHeight)
     def GetWidth(self):
         return self.bWidth
     def GetHeight(self):
@@ -77,31 +83,33 @@ class Board: #Игровая доска
         return self.bData[a_Point.x][a_Point.y]
     def SetItem(self, a_Point, a_Item):
         self.bData[a_Point.x][a_Point.y] = a_Item
-    def __eq__(Board1,Board2):
-        return Board1.GetHeight() == Board2.GetHeight() and Board1.GetWidth() == Board2.GetWidth() and Board1.bData == Board2.bData
+    def __eq__(Board1, Board2):
+        return (Board1.GetHeight() == Board2.GetHeight() and
+                Board1.GetWidth()  == Board2.GetWidth()  and
+                Board1.bData == Board2.bData)
 
 def TestBoardEqual():
-    Board1 = Board(1,1)
-    Board2 = Board(1,1)
+    Board1 = Board(1, 1)
+    Board2 = Board(1, 1)
     assert Board1 == Board2
-    Board1 = Board(2,1)
-    Board2 = Board(1,2)
+    Board1 = Board(2, 1)
+    Board2 = Board(1, 2)
     assert Board1 != Board2
-    Board1 = Board(10,8)
-    Board2 = Board(10,8)
+    Board1 = Board(10, 8)
+    Board2 = Board(10, 8)
     assert Board1 == Board2
-    Board1 = Board(8,10)
-    Board2 = Board(10,8)
+    Board1 = Board(8, 10)
+    Board2 = Board(10, 8)
     assert Board1 != Board2
-    Board1 = Board(10,8)
-    Board2 = Board(10,8)
+    Board1 = Board(10, 8)
+    Board2 = Board(10, 8)
     c1 = BoardItem(BoardItemType.biChecker, 0)
     c2 = BoardItem(BoardItemType.biChecker, 0)
     Board1.SetItem(Point(1, 0), c1)
     Board2.SetItem(Point(1, 0), c2)
     assert Board1 == Board2
-    Board1 = Board(10,8)
-    Board2 = Board(10,8)
+    Board1 = Board(10, 8)
+    Board2 = Board(10, 8)
     c1 = BoardItem(BoardItemType.biChecker, 0)
     Board1.SetItem(Point(1, 0), c1)
     assert Board1 != Board2
@@ -109,13 +117,10 @@ def TestBoardEqual():
 class GameRules:
     def InitBoard(self, a_Board):
         return
-    
     def PointsToNextStep(self, a_Board):
         return []
-
     def IsFinish(self, a_Board):
         return False
-    
     def DoStep(self, gBoard, p, userID):
         return True
 
@@ -144,40 +149,42 @@ def TestListStartPoints():
     board1.SetItem(Point(1, 1), c1)
 
     assert ListStartPoints(user_id2, board1, r) == []
-    
+
     board1.SetItem(Point(3, 0), c2)
 
     assert ListStartPoints(user_id1, board1, r) == [Point(1,0), Point(1,1)]
     assert ListStartPoints(user_id2, board1, r) == [Point(3,0)]
 
-class Game: # Игра целиком
+class Game:                                    # Игра целиком
     def __init__(self, a_UserList, a_Board, a_Rules):
         self.gUserList = a_UserList
-        self.gBoard = a_Board
-        self.gRules = a_Rules
+        self.gBoard    = a_Board
+        self.gRules    = a_Rules
         self.curUserID = 0
         self.gRules.InitBoard(self.gBoard)
-    def GetCurrentUserID(self): # Игрок, который ходит
+    def GetCurrentUserID(self):
         return self.curUserID
-    def GetTryPoints(self): # Текущий список возможных ходов
+    def GetTryPoints(self):
         return self.gRules.PointsToNextStep(self.gBoard)
-    def DoStep(self, p): # Сделать ход
+    def DoStep(self, p):
         if p in self.GetTryPoints():
             switch_user = self.gRules.DoStep(self.gBoard, p, self.GetCurrentUserID())
             if switch_user:
                 self.curUserID += 1
                 if self.curUserID >= len(self.gUserList):
                     self.curUserID = 0
-    
+
 class Step:
     def __init__(self, a_PointFrom, a_PointTo):
         self.pointFrom = a_PointFrom
-        self.pointTo = a_PointTo
+        self.pointTo   = a_PointTo
     def __str__(self):
-        return f"Step(Point({self.pointFrom.x}, {self.pointFrom.y}), Point({self.pointTo.x}, {self.pointTo.y}))"
-    def __eq__(self, other): # For assert equality
+        return f"Step(Point({self.pointFrom.x}, {self.pointFrom.y}), " \
+               f"Point({self.pointTo.x}, {self.pointTo.y}))"
+    def __eq__(self, other):
         if isinstance(other, Step):
-            return self.pointFrom == other.pointFrom and self.pointTo == other.pointTo
+            return (self.pointFrom == other.pointFrom and
+                    self.pointTo   == other.pointTo)
 
 class GameVisualizer:
     def RunNextStep(self):
@@ -199,30 +206,25 @@ def BaseClassesTest():
     assert b.GetItem(Point(1, 0)) == c2
     assert b.GetItem(Point(1, 1)) == BoardItem(BoardItemType.biNone, 0)
 
-
 def myprint(s):
+    # Было: добавление текста в out-text. Оставляем как вспомогательную функцию,
+    # но теперь НЕ вызываем её в тестах (см. ниже).
     document["out-text"].innerHTML = document["out-text"].innerHTML + "<br />" + str(s)
 
 def owerride_print(s):
     document["out-text"].innerHTML = str(s)
 
-
 def GetVerticalWords(size):
     return list(range(1, size + 1))
-
 
 def GetHorisontalWords(size):
     return [chr(ord('A') + i) for i in range(size)]
 
-
 def FromStringToXY(string_cmd):
     if not isinstance(string_cmd, str) or len(string_cmd) < 2:
         return None
-    
-
     horizontal_part = string_cmd[0].upper()
-    vertical_part = string_cmd[1:]
-
+    vertical_part   = string_cmd[1:]
     try:
         x = ord(horizontal_part) - ord('A')
         y = int(vertical_part) - 1
@@ -230,37 +232,36 @@ def FromStringToXY(string_cmd):
     except:
         return None
 
-
 def FromXYToString(x, y):
     if not isinstance(x, int) or not isinstance(y, int):
         return None
     if x < 0 or y < 0:
         return None
     horizontal_part = chr(ord('A') + x)
-    vertical_part = str(y + 1)
+    vertical_part   = str(y + 1)
     return horizontal_part + vertical_part
 
-
 def TestConvertCoordinates():
-    assert FromStringToXY("A1") == (0, 0)
-    assert FromStringToXY("B2") == (1, 1)
-    assert FromStringToXY("C3") == (2, 2)
+    assert FromStringToXY("A1")  == (0, 0)
+    assert FromStringToXY("B2")  == (1, 1)
+    assert FromStringToXY("C3")  == (2, 2)
     assert FromStringToXY("Z26") == (25, 25)
-    assert FromStringToXY("a1") == (0, 0)
+    assert FromStringToXY("a1")  == (0, 0)
     assert FromStringToXY("A12") == (0, 11)
-    assert FromStringToXY("A") == None
-    assert FromStringToXY("1") == None
-    assert FromStringToXY("1A") == None
-    assert FromStringToXY(1) == None
-    assert FromXYToString(0, 0) == "A1"
-    assert FromXYToString(1, 1) == "B2"
-    assert FromXYToString(2, 2) == "C3"
+    assert FromStringToXY("A")   == None
+    assert FromStringToXY("1")   == None
+    assert FromStringToXY("1A")  == None
+    assert FromStringToXY(1)     == None
+    assert FromXYToString(0, 0)   == "A1"
+    assert FromXYToString(1, 1)   == "B2"
+    assert FromXYToString(2, 2)   == "C3"
     assert FromXYToString(25, 25) == "Z26"
-    assert FromXYToString(0, 11) == "A12"
-    assert FromXYToString(-1, 1) == None
-    assert FromXYToString(1, -1) == None
+    assert FromXYToString(0, 11)  == "A12"
+    assert FromXYToString(-1, 1)  == None
+    assert FromXYToString(1, -1)  == None
     assert FromXYToString(1.1, 1) == None
     assert FromXYToString(1, 1.1) == None
+
 def CreateArray2D(defaultValue, width, height):
     array2d = []
     for _ in range(height):
@@ -268,21 +269,27 @@ def CreateArray2D(defaultValue, width, height):
         array2d.append(row)
     return array2d
 
-
 def TestCreateArray2D():
     assert CreateArray2D(0, 0, 0) == []
-    assert CreateArray2D(0, 0, 3) == [[],[],[]]
+    assert CreateArray2D(0, 0, 3) == [[], [], []]
     assert CreateArray2D(0, 3, 0) == []
     assert CreateArray2D(1, 1, 2) == [[1], [1]]
     assert CreateArray2D(2, 2, 2) == [[2, 2], [2, 2]]
     assert CreateArray2D(1, 2, 1) == [[1, 1]]
     assert CreateArray2D("a", 1, 1) == [["a"]]
-    assert CreateArray2D(2, 3, 3) == [[2, 2, 2], [2, 2, 2], [2, 2, 2]]
-    assert CreateArray2D("x", 4, 2) == [["x", "x", "x", "x"], ["x", "x", "x", "x"]]
-    assert CreateArray2D(True, 2, 3) == [[True, True], [True, True], [True, True]]
+    assert CreateArray2D(2, 3, 3) == [[2, 2, 2],
+                                    [2, 2, 2],
+                                    [2, 2, 2]]
+    assert CreateArray2D("x", 4, 2) == [["x", "x", "x", "x"],
+                                      ["x", "x", "x", "x"]]
+    assert CreateArray2D(True, 2, 3) == [[True, True],
+                                        [True, True],
+                                        [True, True]]
     assert CreateArray2D(0, 2, 2) == [[0, 0], [0, 0]]
-    assert CreateArray2D(3.14, 2, 2) == [[3.14, 3.14], [3.14, 3.14]]
-    assert CreateArray2D(None, 2, 2) == [[None, None], [None, None]]
+    assert CreateArray2D(3.14, 2, 2) == [[3.14, 3.14],
+                                        [3.14, 3.14]]
+    assert CreateArray2D(None, 2, 2) == [[None, None],
+                                        [None, None]]
     assert CreateArray2D(5, 1, 5) == [[5], [5], [5], [5], [5]]
     assert CreateArray2D(10, 5, 1) == [[10, 10, 10, 10, 10]]
     a = CreateArray2D(0, 2, 2)
@@ -293,8 +300,6 @@ def TestCreateArray2D():
     b[0][1] = "modified"
     assert b == [["test", "modified", "test"], ["test", "test", "test"]]
 
-
-
 def CreateHTMLTable(getValueFunc, onClickFuncName, width, height):
     result = ""
     for y in range(height):
@@ -303,31 +308,37 @@ def CreateHTMLTable(getValueFunc, onClickFuncName, width, height):
             val = str(getValueFunc(x, y))
             onClick = ""
             if onClickFuncName != "":
-                onClick = " onclick='" + onClickFuncName + "("+ str(x) + "," + str(y) + ");' "
+                onClick = " onclick='" + onClickFuncName + "(" + str(x) + "," + str(y) + ");' "
             result += '<td' + onClick + '>' + val + '</td>'
         result += "</tr>"
     return "<table border=1>" + result + "</table>"
 
-
 def TestCreateHTMLTable():
     def TestValueFunc1(x, y):
-        return str(x+y);
+        return str(x + y)
     def TestValueFunc(x, y):
-        all_desk = [ list("♜♞♝♛♚♝♞♜"), list("♟♟♟♟♟♟♟♟"), list("........"), list("........"), list("........"), list("........"), list("♙♙♙♙♙♙♙♙"), list("♖♘♗♕♔♗♘♖"), ]
+        all_desk = [list("♜♞♝♛♚♝♞♜"),
+                    list("♟♟♟♟♟♟♟♟"),
+                    list("........"),
+                    list("........"),
+                    list("........"),
+                    list("........"),
+                    list("♙♙♙♙♙♙♙♙"),
+                    list("♖♘♗♕♔♗♘♖")]
         return all_desk[y][x]
-#не работает!     assert CreateHTMLTable(TestValueFunc,3,8) == "<table border=1><tr><td>♜</td><td>♞</td><td>♝</td><td>♛</td><td>♚</td><td>♝</td><td>♞</td><td>♜</td></tr><tr><td>♟</td><td>♟</td><td>♟</td><td>♟</td><td>♟</td><td>♟</td><td>♟</td><td>♟</td></tr><tr><td>.</td><td>.</td><td>.</td><td>.</td><td>.</td><td>.</td><td>.</td><td>.</td></tr></table>"
+    # Неактивный тест, который требует точного совпадения размеров.
+    # assert CreateHTMLTable(TestValueFunc,3,8) == ...
     assert CreateHTMLTable(TestValueFunc, "", 2, 2) == "<table border=1><tr><td>♜</td><td>♞</td></tr><tr><td>♟</td><td>♟</td></tr></table>"
     assert CreateHTMLTable(TestValueFunc, "", 1, 1) == "<table border=1><tr><td>♜</td></tr></table>"
     assert CreateHTMLTable(TestValueFunc1, "", 2, 2) == "<table border=1><tr><td>0</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table>"
+
 splitter = '-'
 
 def FromStringToPoint(string_cmd):
     if not isinstance(string_cmd, str) or len(string_cmd) < 2:
         return None
-
     horizontal_part = string_cmd[0].upper()
-    vertical_part = string_cmd[1:]
-
+    vertical_part   = string_cmd[1:]
     try:
         x = ord(horizontal_part) - ord('A')
         y = int(vertical_part) - 1
@@ -342,58 +353,49 @@ def FromPointToString(a_Point):
         return None
     if a_Point.x < 0 or a_Point.y < 0:
         return None
-
     horizontal_part = chr(ord('A') + a_Point.x)
-    vertical_part = str(a_Point.y + 1)
+    vertical_part   = str(a_Point.y + 1)
     return horizontal_part + vertical_part
 
 def FromCmdToStep(a_Cmd):
     if not isinstance(a_Cmd, str) or splitter not in a_Cmd:
         return None
-
     parts = a_Cmd.split(splitter)
     if len(parts) != 2:
         return None
-
     point_from = FromStringToPoint(parts[0])
-    point_to = FromStringToPoint(parts[1])
-
+    point_to   = FromStringToPoint(parts[1])
     if point_from is None or point_to is None:
         return None
-
     return Step(point_from, point_to)
 
 def FromStepToCmd(a_Step):
     if not isinstance(a_Step, Step):
         return None
-
     point_from_str = FromPointToString(a_Step.pointFrom)
-    point_to_str = FromPointToString(a_Step.pointTo)
-
+    point_to_str   = FromPointToString(a_Step.pointTo)
     if point_from_str is None or point_to_str is None:
         return None
-
     return point_from_str + splitter + point_to_str
 
 def TestStepFunctions():
     assert FromStepToCmd(Step(Point(0,0), Point(1,11))) == "A1-B12"
-    assert FromStepToCmd(Step(Point(5, 0), Point(0, 5))) == "F1-A6"
-    assert FromCmdToStep("A12-B13") == Step(Point(0, 11), Point(1, 12))
+    assert FromStepToCmd(Step(Point(5,0), Point(0,5))) == "F1-A6"
+    assert FromCmdToStep("A12-B13") == Step(Point(0,11), Point(1,12))
     assert FromCmdToStep("AA1-B12") == None
     assert FromCmdToStep("A1-BB12") == None
-    assert FromCmdToStep("A1B12") == None
-    assert FromStepToCmd(5) == None
-    assert FromStepToCmd("aa1") == None
+    assert FromCmdToStep("A1B12")   == None
+    assert FromStepToCmd(5)         == None
+    assert FromStepToCmd("aa1")    == None
+
 class UserPlace(enum.Enum):
-    up = enum.auto() 
+    up     = enum.auto()
     bottom = enum.auto()
-    left = enum.auto() 
-    right = enum.auto() 
+    left   = enum.auto()
+    right  = enum.auto()
 
 def IsBlack(x, y):
-    if x % 2 > 0 and y % 2 > 0 or x % 2 == 0 and y % 2 == 0:
-        return True
-    return False
+    return (x % 2 > 0 and y % 2 > 0) or (x % 2 == 0 and y % 2 == 0)
 
 def PlaceCheck(dir, x, y, width, height):
     if UserPlace.bottom == dir:
@@ -401,37 +403,28 @@ def PlaceCheck(dir, x, y, width, height):
             return True
         return False
     elif UserPlace.up == dir:
-        if IsBlack(x, y) and ShorterToBlack(y,height):
+        if IsBlack(x, y) and ShorterToBlack(y, height):
             return True
         return False
     elif UserPlace.left == dir:
-        if IsBlack(x ,y) and ShorterToGray(x):
+        if IsBlack(x, y) and ShorterToGray(x):
             return True
     elif UserPlace.right == dir:
-        if IsBlack(x ,y) and ShorterToAqamarine(x ,width):
+        if IsBlack(x, y) and ShorterToAqamarine(x, width):
             return True
     return False
-def ShorterToWhite(y):
-    if  y <= 2:
-        return True
-    return False
-    
-    
 
-def ShorterToBlack(y,height):
-    if  y >= height - 3:
-        return True
-    return False
+def ShorterToWhite(y):
+    return y <= 2
+
+def ShorterToBlack(y, height):
+    return y >= height - 3
 
 def ShorterToGray(x):
-    if x <= 2:
-        return True
-    return False
-    
-def ShorterToAqamarine(x,width):
-    if x >= width - 3:
-        return True 
-    return False
+    return x <= 2
+
+def ShorterToAqamarine(x, width):
+    return x >= width - 3
 
 def TestPlaceCheck():
     assert IsBlack(0, 0) == True
@@ -439,39 +432,131 @@ def TestPlaceCheck():
     assert IsBlack(0, 1) == False
     assert IsBlack(1, 0) == False
     assert IsBlack(1, 1) == True
-    
+
     assert PlaceCheck(UserPlace.bottom, 0, 0, 8, 8) == True
     assert PlaceCheck(UserPlace.bottom, 0, 1, 8, 8) == False
-    assert PlaceCheck(UserPlace.up, 6, 6, 8, 8,)==True
-    assert PlaceCheck(UserPlace.up, 1, 6, 8, 8)==False
-    assert PlaceCheck(UserPlace.left, 2, 2, 8, 8)==True
-    assert PlaceCheck(UserPlace.left, 3, 6, 8, 8)==False
-    assert PlaceCheck(UserPlace.right, 5, 7, 8, 8)==True
-    assert PlaceCheck(UserPlace.right, 1, 2, 8, 8)==False
-    
-    assert ShorterToBlack(6,8)==True
-    assert ShorterToBlack(1,8)==False
-    
-    assert ShorterToWhite(1)==True
-    assert ShorterToWhite(4)==False
-    
-    assert ShorterToGray(1)==True
-    assert ShorterToGray(5)==False
+    assert PlaceCheck(UserPlace.up, 6, 6, 8, 8) == True
+    assert PlaceCheck(UserPlace.up, 1, 6, 8, 8) == False
+    assert PlaceCheck(UserPlace.left, 2, 2, 8, 8) == True
+    assert PlaceCheck(UserPlace.left, 3, 6, 8, 8) == False
+    assert PlaceCheck(UserPlace.right, 5, 7, 8, 8) == True
+    assert PlaceCheck(UserPlace.right, 1, 2, 8, 8) == False
 
-    assert ShorterToAqamarine(13,15)==True
-    assert ShorterToAqamarine(1,8)==False
+    assert ShorterToBlack(6, 8) == True
+    assert ShorterToBlack(1, 8) == False
+
+    assert ShorterToWhite(1) == True
+    assert ShorterToWhite(4) == False
+
+    assert ShorterToGray(1) == True
+    assert ShorterToGray(5) == False
+
+    assert ShorterToAqamarine(13, 15) == True
+    assert ShorterToAqamarine(1, 8) == False
+
+
+def _inside_board(p: Point, board: Board) -> bool:
+    return 0 <= p.x < board.GetWidth() and 0 <= p.y < board.GetHeight()
+
+def _forward_dir(user_id: int) -> int:
+    return 1 if user_id == 0 else -1
+
+def NextItemStep(a_PointStart: Point, a_Board: Board) -> list:
+    piece = a_Board.GetItem(a_PointStart)
+
+
+    if piece.iType != BoardItemType.biChecker:
+        return []
+
+    user_id = piece.userID
+    forward = _forward_dir(user_id)
+
+    result = []
+    for dx in (-1, 1):
+        dest = Point(a_PointStart.x + dx, a_PointStart.y + forward)
+        if _inside_board(dest, a_Board):
+            if a_Board.GetItem(dest).iType == BoardItemType.biNone:
+                result.append(dest)
+    for dx in (-1, 1):
+        for dy in (-1, 1):
+            adj  = Point(a_PointStart.x + dx, a_PointStart.y + dy)   # соседняя клетка
+            land = Point(adj.x + dx, adj.y + dy)                  # поле после прыжка
+            if not (_inside_board(adj, a_Board) and _inside_board(land, a_Board)):
+                continue
+            adj_item  = a_Board.GetItem(adj)
+            land_item = a_Board.GetItem(land)
+            if (adj_item.iType in (BoardItemType.biChecker, BoardItemType.biDamka) and
+                adj_item.userID != user_id and
+                land_item.iType == BoardItemType.biNone):
+                result.append(land)
+    unique = []
+    for p in result:
+        if p not in unique:
+            unique.append(p)
+    return unique
+
+def TestNextItemStep():
+    board = Board(8, 8)
+    start = Point(2, 2)
+    board.SetItem(start,
+                  BoardItem(BoardItemType.biChecker, 0))
+    assert sorted(NextItemStep(start, board), key=lambda p: (p.x, p.y)) == \
+           sorted([Point(1,3), Point(3,3)], key=lambda p: (p.x, p.y))
+    board2 = Board(8, 8)
+    start2 = Point(0, 0)
+    board2.SetItem(start2,
+                   BoardItem(BoardItemType.biChecker, 0))
+    assert NextItemStep(start2, board2) == [Point(1,1)]
+
+    board3 = Board(8, 8)
+    my3 = Point(2, 2)
+    opp3 = Point(3, 3)                     # вражеская шашка
+    board3.SetItem(my3,
+                   BoardItem(BoardItemType.biChecker, 0))
+    board3.SetItem(opp3,
+                   BoardItem(BoardItemType.biChecker, 1))
+    assert sorted(NextItemStep(my3, board3), key=lambda p: (p.x, p.y)) == \
+           sorted([Point(1,3), Point(4,4)], key=lambda p: (p.x, p.y))
+
+    board4 = Board(8, 8)
+    my4 = Point(4,4)
+    board4.SetItem(my4,
+                   BoardItem(BoardItemType.biChecker, 1))   # игрок 1 – вперёд вверх
+    foes = [(Point(3,3), Point(2,2)),
+            (Point(5,3), Point(6,2)),
+            (Point(3,5), Point(2,6)),
+            (Point(5,5), Point(6,6))]
+    for foe, land in foes:
+        board4.SetItem(foe,
+                       BoardItem(BoardItemType.biChecker, 0))   # противник
+    assert sorted(NextItemStep(my4, board4), key=lambda p: (p.x, p.y)) == \
+           sorted([Point(2,2), Point(6,2), Point(2,6), Point(6,6)],
+                  key=lambda p: (p.x, p.y))
+
+    board5 = Board(8, 8)
+    damka = Point(3,3)
+    board5.SetItem(damka,
+                   BoardItem(BoardItemType.biDamka, 0))
+    assert NextItemStep(damka, board5) == []
+
+    board6 = Board(8, 8)
+    my6 = Point(4,4)
+    board6.SetItem(my6,
+                   BoardItem(BoardItemType.biChecker, 0))
+    opp6 = Point(5,5)                      # вражеская фигура
+    board6.SetItem(opp6,
+                   BoardItem(BoardItemType.biChecker, 1))
+    assert sorted(NextItemStep(my6, board6), key=lambda p: (p.x, p.y)) == \
+           sorted([Point(3,5), Point(6,6)], key=lambda p: (p.x, p.y))
 
 def TestXO():
-    # Игра крестики - нолики
+    # Игра «Крестики‑нолики», использующая общую доску
     class GameVisualizerXO (GameVisualizer):
         def __init__(self, a_Game):
             self.game = a_Game
 
         def GetUserPlayItem(self, userID):
-            user_play_item = "O"
-            if (userID == 0):
-                user_play_item = "X"
-            return user_play_item
+            return "X" if userID == 0 else "O"
 
         def RunNextStep(self):
             self.DrawBoard()
@@ -482,61 +567,47 @@ def TestXO():
             def GetValueXO(x, y):
                 b_item = board.GetItem(Point(x, y))
                 if b_item.iType == BoardItemType.biChecker:
-                    user_play_item = self.GetUserPlayItem(b_item.userID)
-                    return user_play_item
+                    return self.GetUserPlayItem(b_item.userID)
                 else:
                     return "&nbsp;&nbsp;"
-
             def OnClick(x, y):
                 game.DoStep(Point(x, y))
                 self.RunNextStep()
             window.OnClick = OnClick
-
             board_html = CreateHTMLTable(GetValueXO, "OnClick", board.bWidth, board.bHeight)
-            user_play_item = self.GetUserPlayItem(game.GetCurrentUserID())
-            board_html += "<p>Ходят " + user_play_item + "</p>"
-
+            board_html += "<p>Ходят " + self.GetUserPlayItem(game.GetCurrentUserID()) + "</p>"
             owerride_print(board_html)
-
 
     class GameRulesXO (GameRules):
         def InitBoard(self, a_Board):
-            b = a_Board
-
-            for y in range(b.GetHeight()):
-                for x in range(b.GetWidth()):
-                    p = Point(x, y)
-                    b.SetItem(p, BoardItem(BoardItemType.biNone, 0))
+            for y in range(a_Board.GetHeight()):
+                for x in range(a_Board.GetWidth()):
+                    a_Board.SetItem(Point(x, y),
+                                    BoardItem(BoardItemType.biNone, 0))
 
         def PointsToNextStep(self, a_Board):
             result = []
             for y in range(a_Board.GetHeight()):
                 for x in range(a_Board.GetWidth()):
                     p = Point(x, y)
-                    b_item = a_Board.GetItem(p)
-                    if b_item.iType == BoardItemType.biNone:
-                        result += [p]
+                    if a_Board.GetItem(p).iType == BoardItemType.biNone:
+                        result.append(p)
             return result
 
         def DoStep(self, a_Board, p, userID):
-            a_Board.SetItem(p, BoardItem(BoardItemType.biChecker, userID))
+            a_Board.SetItem(p,
+                            BoardItem(BoardItemType.biChecker, userID))
             return True
 
         def IsFinish(self, a_Board):
             return False
 
-    user_list = [
-        User(UserType.utHuman, "Pavel"),
-        User(UserType.utHuman, "Maxim"),
-    ]
-
-    b = Board(3, 3)
-
-    game_rules = GameRulesXO()
-
-    g = Game(user_list, b, game_rules)
-    
-    vis = GameVisualizerXO(g)
+    users = [User(UserType.utHuman, "Pavel"),
+             User(UserType.utHuman, "Maxim")]
+    board = Board(3, 3)
+    rules = GameRulesXO()
+    game  = Game(users, board, rules)
+    vis   = GameVisualizerXO(game)
     vis.RunNextStep()
 
 def Test(event):
@@ -549,15 +620,24 @@ def Test(event):
     TestBoardEqual()
     TestStepFunctions()
     TestPlaceCheck()
+    TestNextItemStep()
     myprint('Все тесты прошли без ошибок')
 
 document["button__start_test"].bind("click", Test)
 
+#можно будет использовать в задаче №43
+#for i in range(h):
+#    data[h // 2][i] = "x"
+#    data[i][h // 2] = "x"
+#    data[i][i] = "x"
+#    j = w - 1 - i
+#    data[i][j] = "x"
+
+# Автозапуск небольшой демо‑игры (крестики‑нолики)
 TestXO()
 
 </script>
 
 
 </body>
-
 </html>
